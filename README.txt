@@ -26,6 +26,13 @@ Build and run
   In VS Code, use Terminal > Run Task > Run Banking System (JavaFX).
   Do not use the Java extension's plain Run Java action on BankApp; it omits the JavaFX runtime modules.
 
+GitHub Codespaces
+  Use the Java 25 environment for this project.
+  In VS Code, open Terminal > Run Task and choose Build Banking System or Run Banking Integration Tests.
+  The JavaFX run task uses the Maven Wrapper on Linux and macOS, and mvnw.cmd on Windows.
+  A Codespace without a graphical display can build and test the application, but it cannot show the JavaFX window.
+  Use desktop VS Code on a machine with a display when you need to demonstrate the GUI.
+
 Demo logins
   teller / 1234
   john / 1234

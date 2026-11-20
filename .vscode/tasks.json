@@ -4,7 +4,43 @@
     {
       "label": "Run Banking System (JavaFX)",
       "type": "shell",
-      "command": ".\\mvnw.cmd javafx:run",
+      "command": "bash ./mvnw javafx:run",
+      "windows": {
+        "command": ".\\mvnw.cmd javafx:run"
+      },
+      "osx": {
+        "command": "bash ./mvnw javafx:run"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build Banking System",
+      "type": "shell",
+      "command": "bash ./mvnw -DskipTests package",
+      "windows": {
+        "command": ".\\mvnw.cmd -DskipTests package"
+      },
+      "osx": {
+        "command": "bash ./mvnw -DskipTests package"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Banking Integration Tests",
+      "type": "shell",
+      "command": "bash ./mvnw test",
+      "windows": {
+        "command": ".\\mvnw.cmd test"
+      },
+      "osx": {
+        "command": "bash ./mvnw test"
+      },
       "options": {
         "cwd": "${workspaceFolder}"
       },

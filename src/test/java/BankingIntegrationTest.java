@@ -1,7 +1,9 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
@@ -66,5 +68,26 @@ class BankingIntegrationTest {
         try (java.sql.Connection connection = database.getConnection(); java.sql.Statement statement = connection.createStatement()) {
             statement.execute("SHUTDOWN");
         }
+    }
+
+    @Test
+    void accountAndTransactionOutputQueriesRespectCustomerOwnership() {
+        BankController bank = freshController();
+        assertEquals("OK", bank.login("john", "1234"));
+
+        List<Account> accounts = bank.getVisibleAccounts();
+        assertEquals(List.of("AC1001", "AC1002"),
+                accounts.stream().map(Account::getAccountNumber).toList());
+
+        List<BankingTransaction> transactions = bank.getTransactionsForAccount("AC1001");
+        assertTrue(!transactions.isEmpty());
+        assertTrue(transactions.stream().allMatch(tx -> "AC1001".equals(tx.getAccountNumber())));
+        IllegalStateException denied = assertThrows(IllegalStateException.class,
+                () -> bank.getTransactionsForAccount("AC1003"));
+        assertEquals("You can only use your own accounts.", denied.getMessage());
+
+        bank.logout();
+        assertEquals("OK", bank.login("teller", "1234"));
+        assertEquals(11, bank.getVisibleAccounts().size());
     }
 }

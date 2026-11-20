@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Comparator;
 
 // Controller coordinates the boundary, domain model, and JDBC data access layer.
 public class BankController {
@@ -57,6 +58,36 @@ public class BankController {
     public void logout() { currentUser = null; }
     public String getCurrentUser() { return currentUser == null ? "" : currentUser.getUsername(); }
     public String getRole() { return currentUser == null ? "" : currentUser.getRole(); }
+
+    public List<Account> getVisibleAccounts() {
+        String access = requireSignedIn();
+        if (access != null) throw new IllegalStateException(access);
+        try {
+            return "TELLER".equals(getRole())
+                    ? accountDAO.findAll()
+                    : accountDAO.findByCustomer(currentUser.getCustomerId());
+        } catch (Exception ex) {
+            throw new IllegalStateException(message(ex), ex);
+        }
+    }
+
+    public List<BankingTransaction> getTransactionsForAccount(String accountNumber) {
+        String access = requireSignedIn();
+        if (access != null) throw new IllegalStateException(access);
+        try {
+            String number = normalizeAccountNumber(accountNumber);
+            Account account = accountDAO.findByNumber(number);
+            if (account == null) throw new IllegalArgumentException("Account not found.");
+            String ownerError = checkOwnership(account);
+            if (ownerError != null) throw new IllegalArgumentException(ownerError);
+            List<BankingTransaction> transactions = transactionDAO.findByAccount(number);
+            transactions.sort(Comparator.comparing(BankingTransaction::getOccurredAt).reversed()
+                    .thenComparing(Comparator.comparingLong(BankingTransaction::getId).reversed()));
+            return transactions;
+        } catch (Exception ex) {
+            throw new IllegalStateException(message(ex), ex);
+        }
+    }
 
     public String registerCustomer(String name, String address, String type, boolean employed,
                                    String employerName, String employerAddress) {

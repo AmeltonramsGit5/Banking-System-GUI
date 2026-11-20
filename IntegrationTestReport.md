@@ -17,9 +17,12 @@ The automated integration suite exercises the controller, domain objects, H2 JDB
 | Teller-only registration | Customer role rejected; teller role accepted | Passed |
 | Sample data | Ten customers and eleven sample accounts are inserted into an empty database | Passed |
 | File-backed H2 | Schema, seed data, interest processing, and subsequent DAO reads work in the same app session | Passed |
+| Account and transaction table queries | Customer sees only their own accounts and history; teller sees all eleven accounts | Passed |
 
 ## Execution record
 
-Executed on 19 November 2026 with JDK 25.0.2 and Maven 3.10.1. `mvn clean test` completed with five tests, zero failures, zero errors, and zero skipped tests.
+The original five test methods were executed on 19 November 2026 with JDK 25.0.2 and Maven 3.10.1. `mvn clean test` completed with five tests, zero failures, zero errors, and zero skipped tests.
 
-The JavaFX application also launched to its Bank Login screen using a fresh file-backed database. The UI typing automation was unavailable in this environment, so the login-to-deposit path was not exercised through clicks. The automated tests cover the controller, domain, persistence, authorization, and transaction history layers; perform one manual GUI flow before submission.
+On 20 November 2026, the new account and transaction table query test was added. All six JUnit test methods were then compiled and invoked with JDK 25.0.2, H2 2.5.252, and the JUnit 5.13.4 assertions; all six passed.
+
+The JavaFX application launched successfully, but the GUI login and transaction controls were not clicked during this verification. The automated tests cover the controller, domain, persistence, authorization, account summary data, and transaction history data. Complete the read-only GUI smoke check listed in `ImplementationChecklist.md` before presentation.
